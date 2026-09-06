@@ -672,6 +672,11 @@ async function renderSettings(app) {
     <section class="card"><div class="card-head"><h2>📱 ใช้บนมือถือ</h2></div>
       <div class="note">เปิดแอพในเบราว์เซอร์มือถือแล้วเลือก <b>Add to Home Screen</b> จะได้ไอคอนเหมือนแอพจริง เปิดออฟไลน์ได้ · ข้อมูลของแต่ละเครื่องแยกกัน ให้กดซิงค์ Drive เพื่อรวมกัน</div>
     </section>
+
+    <section class="card"><div class="card-head"><h2>📘 คู่มือ</h2></div>
+      <div class="row"><a class="btn ghost" href="guide.html" target="_blank" rel="noopener">เปิดคู่มือติดตั้งและตั้งค่า</a></div>
+      <div class="note" style="margin-top:10px">อยากชวนเพื่อนมาใช้ ส่งลิงก์คู่มือนี้ให้เพื่อนอ่านได้เลย ไม่ต้องมีบัญชีอะไรก็เปิดดูได้</div>
+    </section>
     <div class="save-state" style="text-align:center"></div>
   </div>`;
 

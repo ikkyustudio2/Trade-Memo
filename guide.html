@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f5f1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📘</text></svg>">
+<title>คู่มือ Trade Memo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f1; --paper:#ffffff; --ink:#211f1a; --ink-2:#5c584e; --ink-3:#938c7d;
+  --line:#e4e0d6; --line-strong:#d3cdbd;
+  --accent:#3b64e0; --accent-ink:#ffffff; --accent-soft:#e9edfc;
+  --pos:#1f8f5c; --pos-soft:#e5f5ee;
+  --warn:#b5791c; --warn-soft:#faf0dd;
+  --chip:#f0ede4;
+  --shadow: 0 1px 2px rgba(30,25,10,.04), 0 10px 30px -12px rgba(30,25,10,.12);
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15141a; --paper:#1d1c24; --ink:#eeecf1; --ink-2:#b2aec2; --ink-3:#78748c;
+    --line:#302e3c; --line-strong:#3d3a4c;
+    --accent:#8aa2ff; --accent-ink:#12111a; --accent-soft:#242236;
+    --pos:#5cd6a0; --pos-soft:#1c3129;
+    --warn:#f0c15c; --warn-soft:#332a15;
+    --chip:#26242f;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 20px 40px -20px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15141a; --paper:#1d1c24; --ink:#eeecf1; --ink-2:#b2aec2; --ink-3:#78748c;
+  --line:#302e3c; --line-strong:#3d3a4c;
+  --accent:#8aa2ff; --accent-ink:#12111a; --accent-soft:#242236;
+  --pos:#5cd6a0; --pos-soft:#1c3129;
+  --warn:#f0c15c; --warn-soft:#332a15;
+  --chip:#26242f;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 20px 40px -20px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Sarabun','Noto Sans Thai',system-ui,sans-serif;line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Mitr','Noto Sans Thai',sans-serif;font-weight:500;line-height:1.3;text-wrap:balance;color:var(--ink)}
+a{color:var(--accent)}
+code, .code{font-family:'JetBrains Mono',monospace;font-size:.88em}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px 90px}
+
+/* header */
+.top{padding:56px 0 34px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.top h1{font-size:clamp(1.9rem,4.4vw,2.5rem);margin:0 0 10px}
+.top p{color:var(--ink-2);margin:0;max-width:56ch;font-size:1.02rem}
+.top .meta{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:var(--chip);color:var(--ink-2);font-size:.8rem}
+
+/* toc */
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0;padding:0;list-style:none}
+.toc a{display:block;padding:7px 13px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--ink-2);font-size:.85rem;text-decoration:none;transition:border-color .15s,color .15s}
+.toc a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* sections */
+section{padding:42px 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-num{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:.95rem}
+section h2{font-size:1.4rem;margin:0}
+.sec-sub{color:var(--ink-3);margin:0 0 22px;font-size:.95rem}
+
+/* steps */
+.steps{display:flex;flex-direction:column;gap:0;counter-reset:step}
+.step{display:grid;grid-template-columns:34px 1fr;gap:16px;padding:18px 0;border-top:1px solid var(--line)}
+.step:first-child{border-top:0;padding-top:0}
+.step-n{counter-increment:step;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:500;flex:none}
+.step h3{margin:0 0 6px;font-size:1.05rem;font-weight:500}
+.step p{margin:0 0 8px;color:var(--ink-2)}
+.step p:last-child{margin-bottom:0}
+
+/* value / copy chip */
+.val{display:inline-flex;align-items:center;gap:8px;background:var(--chip);border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px;margin:4px 6px 4px 0;font-size:.85rem;color:var(--ink)}
+.val .k{color:var(--ink-3);font-family:'Sarabun',sans-serif;font-size:.8rem}
+.vals{display:flex;flex-wrap:wrap;margin:10px 0}
+
+/* cards / callouts */
+.note{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-top:16px;box-shadow:var(--shadow)}
+.note.tip{border-color:color-mix(in srgb, var(--pos) 35%, var(--line));background:var(--pos-soft)}
+.note.tip strong{color:var(--pos)}
+.note.warn{border-color:color-mix(in srgb, var(--warn) 40%, var(--line));background:var(--warn-soft)}
+.note.warn strong{color:var(--warn)}
+.note p{margin:0}
+.note p+p{margin-top:8px}
+
+/* platform grid */
+.plat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:6px}
+.plat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.plat .ic{font-size:1.4rem}
+.plat h3{font-size:1rem;margin:10px 0 6px}
+.plat ol{margin:0;padding-left:20px;color:var(--ink-2);font-size:.92rem}
+.plat li+li{margin-top:4px}
+
+/* pages nav (3 tabs) */
+.pages{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+.page-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px 14px;box-shadow:var(--shadow)}
+.page-card .ic{font-size:1.3rem;display:block;margin-bottom:8px}
+.page-card h3{font-size:.96rem;margin:0 0 4px}
+.page-card p{margin:0;color:var(--ink-3);font-size:.82rem}
+
+/* faq */
+.faq{display:flex;flex-direction:column;gap:10px}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:2px 16px;box-shadow:var(--shadow)}
+.faq summary{padding:14px 0;font-family:'Mitr',sans-serif;font-weight:500;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--ink)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';font-family:'JetBrains Mono',monospace;color:var(--ink-3);font-size:1.1rem;flex:none}
+.faq details[open] summary::after{content:'–'}
+.faq details p{margin:0 0 16px;color:var(--ink-2)}
+
+.link-btn{display:inline-flex;align-items:center;gap:6px;color:var(--accent);text-decoration:none;font-size:.92rem;border-bottom:1px solid transparent}
+.link-btn:hover{border-color:var(--accent)}
+
+footer{padding:34px 0 10px;color:var(--ink-3);font-size:.85rem}
+footer a{color:var(--ink-2)}
+
+@media (max-width:600px){
+  .pages{grid-template-columns:1fr}
+  .top{padding:40px 0 26px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">คู่มือติดตั้งและตั้งค่า</p>
+    <h1>เริ่มต้นใช้ Trade Memo</h1>
+    <p>ไดอารี่บันทึกการเทรดที่เก็บข้อมูลในเครื่องของคุณเอง ไม่มีเซิร์ฟเวอร์กลาง ไม่มีบัญชีให้สมัคร เปิดลิงก์แล้วเริ่มจดได้ทันที ส่วนที่เหลือในหน้านี้เป็นออปชันเสริมที่ตั้งครั้งเดียวแล้วใช้ยาว</p>
+    <div class="meta">
+      <span class="badge">🆓 ใช้ฟรี</span>
+      <span class="badge">📱 มือถือ + คอม</span>
+      <span class="badge">🔒 ข้อมูลแยกเครื่องใครเครื่องมัน</span>
+    </div>
+    <ul class="toc">
+      <li><a href="#open">เปิดใช้งาน</a></li>
+      <li><a href="#tour">หน้าตาแอพ</a></li>
+      <li><a href="#general">ตั้งค่าทั่วไป</a></li>
+      <li><a href="#ai">อ่านภาพ MT5 ด้วย AI</a></li>
+      <li><a href="#drive">ซิงค์ Google Drive</a></li>
+      <li><a href="#faq">คำถามที่พบบ่อย</a></li>
+    </ul>
+  </header>
+
+  <section id="open">
+    <div class="sec-head"><span class="sec-num">01</span><h2>เปิดใช้งาน</h2></div>
+    <p class="sec-sub">ไม่ต้องติดตั้งโปรแกรม ไม่ต้องสมัครสมาชิก — เปิดลิงก์แล้วใช้ได้เลย</p>
+    <div class="note">
+      <p><strong>ลิงก์แอพ:</strong> <a class="code" href="https://ikkyustudio2.github.io/Trade-Memo/" target="_blank" rel="noopener">ikkyustudio2.github.io/Trade-Memo</a></p>
+    </div>
+    <div class="plat-grid">
+      <div class="plat">
+        <span class="ic">📱</span>
+        <h3>มือถือ (iPhone)</h3>
+        <ol>
+          <li>เปิดลิงก์ด้วย Safari</li>
+          <li>กดปุ่ม แชร์ (สี่เหลี่ยมมีลูกศรชี้ขึ้น)</li>
+          <li>เลือก <em>เพิ่มไปยังหน้าจอโฮม</em></li>
+        </ol>
+      </div>
+      <div class="plat">
+        <span class="ic">📱</span>
+        <h3>มือถือ (Android)</h3>
+        <ol>
+          <li>เปิดลิงก์ด้วย Chrome</li>
+          <li>กดเมนู ⋮ มุมขวาบน</li>
+          <li>เลือก <em>เพิ่มไปยังหน้าจอหลัก</em></li>
+        </ol>
+      </div>
+      <div class="plat">
+        <span class="ic">💻</span>
+        <h3>คอมพิวเตอร์</h3>
+        <ol>
+          <li>เปิดลิงก์ด้วย Chrome / Edge</li>
+          <li>ปักหมุดแท็บ หรือเพิ่มเป็น Bookmark</li>
+          <li>ใช้งานได้ทันทีไม่ต้องติดตั้ง</li>
+        </ol>
+      </div>
+    </div>
+    <div class="note tip"><p><strong>เปิดออฟไลน์ได้:</strong> หลังเปิดแอพครั้งแรกแล้ว จะจดบันทึกได้แม้ไม่มีเน็ต (ยกเว้นตอนอ่านภาพด้วย AI หรือซิงค์ Drive ที่ต้องต่อเน็ต)</p></div>
+  </section>
+
+  <section id="tour">
+    <div class="sec-head"><span class="sec-num">02</span><h2>หน้าตาแอพ</h2></div>
+    <p class="sec-sub">มี 3 หน้าหลัก สลับได้จากแถบด้านล่าง (มือถือ) หรือด้านบน (คอม)</p>
+    <div class="pages">
+      <div class="page-card"><span class="ic">📝</span><h3>ไดอารี่</h3><p>เลือกวัน → จดแผนก่อนเทรด → บันทึกออเดอร์ → สรุปหลังเทรด</p></div>
+      <div class="page-card"><span class="ic">📊</span><h3>สรุปผล</h3><p>winrate, กำไรขาดทุน, กราฟ, ปฏิทิน แยกราย วัน/สัปดาห์/เดือน/ปี</p></div>
+      <div class="page-card"><span class="ic">⚙️</span><h3>ตั้งค่า</h3><p>ธีม, สกุลเงิน, API key, Google Drive, สำรองข้อมูล</p></div>
+    </div>
+  </section>
+
+  <section id="general">
+    <div class="sec-head"><span class="sec-num">03</span><h2>ตั้งค่าทั่วไป</h2></div>
+    <p class="sec-sub">ทำครั้งแรกที่เปิดแอพ ไม่บังคับ แต่แนะนำให้ตั้งไว้</p>
+    <div class="steps">
+      <div class="step">
+        <span class="step-n"></span>
+        <div><h3>เลือกธีม</h3><p>หน้าตั้งค่า → <em>ธีม</em> เลือก ☀️ กลางวัน, 🌙 กลางคืน หรือตามระบบ — หรือกดไอคอนรูปพระอาทิตย์/พระจันทร์มุมขวาบนสลับเร็ว ๆ ได้เลย</p></div>
+      </div>
+      <div class="step">
+        <span class="step-n"></span>
+        <div><h3>ตั้งสกุลเงินบัญชี</h3><p>หน้าตั้งค่า → <em>สกุลเงินบัญชี</em> ใส่ตามที่โบรกเกอร์ใช้ เช่น <span class="val">USD</span><span class="val">THB</span> จะโชว์ต่อท้ายตัวเลขกำไรในหน้าสรุปผล</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ai">
+    <div class="sec-head"><span class="sec-num">04</span><h2>อ่านภาพ MT5 ด้วย AI</h2></div>
+    <p class="sec-sub">ออปชันเสริม — แคปหน้าจอออเดอร์จาก MT5 แล้วให้แอพจดให้อัตโนมัติ ไม่ตั้งก็ใช้ตัวอ่าน OCR ฟรีในตัวแทนได้ (แม่นน้อยกว่า ต้องตรวจเลขเอง)</p>
+    <div class="plat-grid">
+      <div class="plat">
+        <span class="ic">🤖</span>
+        <h3>Claude (แม่นสุด)</h3>
+        <ol>
+          <li>สมัคร key ที่ <a class="link-btn" href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a></li>
+          <li>วางในหน้าตั้งค่า → <em>Claude API key</em></li>
+        </ol>
+        <p style="margin-top:10px;font-size:.82rem;color:var(--ink-3)">จ่ายตามใช้จริง เฉลี่ยภาพละไม่กี่สตางค์</p>
+      </div>
+      <div class="plat">
+        <span class="ic">✨</span>
+        <h3>Gemini (มี free tier)</h3>
+        <ol>
+          <li>สมัคร key ฟรีที่ <a class="link-btn" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+          <li>วางในหน้าตั้งค่า → <em>Gemini API key</em></li>
+        </ol>
+        <p style="margin-top:10px;font-size:.82rem;color:var(--ink-3)">มีโควต้าใช้ฟรีต่อวัน เหมาะใช้ประจำ</p>
+      </div>
+    </div>
+    <div class="note"><p><strong>Key เก็บที่ไหน:</strong> เก็บในเครื่อง/เบราว์เซอร์ของคุณเท่านั้น ไม่ถูกส่งไปที่ไหนนอกจาก Anthropic หรือ Google ตอนอ่านภาพจริง ๆ และไม่ถูกอัปโหลดขึ้น Google Drive ตอนซิงค์</p></div>
+  </section>
+
+  <section id="drive">
+    <div class="sec-head"><span class="sec-num">05</span><h2>ซิงค์ Google Drive</h2></div>
+    <p class="sec-sub">ออปชันเสริม — ใช้เก็บสำรองอัตโนมัติและซิงค์ข้อมูลข้ามเครื่อง แต่ละคนต้องสร้างของตัวเอง (ทำครั้งเดียว ใช้เวลาราว 5 นาที)</p>
+    <div class="steps">
+      <div class="step">
+        <span class="step-n"></span>
+        <div>
+          <h3>สร้างโปรเจกต์บน Google Cloud</h3>
+          <p>ไปที่ <a class="link-btn" href="https://console.cloud.google.com/" target="_blank" rel="noopener">console.cloud.google.com</a> → กด <em>New Project</em> ตั้งชื่ออะไรก็ได้ เช่น Trade Memo</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-n"></span>
+        <div>
+          <h3>เปิดใช้ Google Drive API</h3>
+          <p>เมนู <em>APIs &amp; Services → Library</em> → ค้นหา <span class="val">Google Drive API</span> → กด Enable</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-n"></span>
+        <div>
+          <h3>ตั้งค่าหน้ายินยอม (Branding)</h3>
+          <p>เมนู <em>Google Auth Platform → Branding</em> → ใส่ App name และอีเมลตัวเอง 2 ช่อง (support email + developer contact) → Save</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-n"></span>
+        <div>
+          <h3>เพิ่มตัวเองเป็นผู้ใช้ทดสอบ</h3>
+          <p>เมนู <em>Audience</em> → ส่วน Test users → กด <em>Add users</em> → ใส่อีเมล Gmail ของคุณ (แอพจะใช้ได้เฉพาะอีเมลที่เพิ่มไว้ตรงนี้ จนกว่าจะ Publish app)</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-n"></span>
+        <div>
+          <h3>สร้าง OAuth Client ID</h3>
+          <p>เมนู <em>Clients</em> → <em>Create client</em> → Application type เลือก <span class="val">Web application</span></p>
+          <p>ที่ช่อง <em>Authorized JavaScript origins</em> ใส่ที่อยู่ที่คุณใช้เปิดแอพ:</p>
+          <div class="vals">
+            <span class="val"><span class="k">เว็บที่แชร์ให้ใช้</span> https://ikkyustudio2.github.io</span>
+          </div>
+          <p style="font-size:.85rem;color:var(--ink-3)">ถ้าเปิดจาก localhost บนคอมด้วย ให้เพิ่มอีกบรรทัด <span class="code">http://localhost:8765</span></p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-n"></span>
+        <div>
+          <h3>เอา Client ID มาวางในแอพ</h3>
+          <p>ก๊อป <em>Client ID</em> ที่ได้ (ลงท้ายด้วย <span class="code">.apps.googleusercontent.com</span>) ไปวางที่หน้าตั้งค่า → <em>Google Drive → OAuth Client ID</em> แล้วกด ☁️ ซิงค์</p>
+        </div>
+      </div>
+    </div>
+    <div class="note warn"><p><strong>ครั้งแรกที่กดซิงค์</strong> Google อาจโชว์หน้าเตือน "Google hasn't verified this app" — เป็นเรื่องปกติเพราะยังไม่ได้ยื่นให้ Google ตรวจ กดที่ <em>Advanced</em> แล้วเลือก <em>ไปที่ [ชื่อแอพ] (ไม่ปลอดภัย)</em> เพื่อเข้าใช้ต่อได้ตามปกติ ปลอดภัยเพราะเป็นแอพของคุณเอง</p></div>
+    <div class="note tip"><p><strong>ข้อมูลใครข้อมูลมัน:</strong> แต่ละคนล็อกอิน Google บัญชีตัวเอง ได้โฟลเดอร์ Drive แยกกันคนละก้อน ไม่ปนกับใคร</p></div>
+  </section>
+
+  <section id="faq">
+    <div class="sec-head"><span class="sec-num">06</span><h2>คำถามที่พบบ่อย</h2></div>
+    <div class="faq">
+      <details open>
+        <summary>ไม่ตั้งค่าอะไรเลยใช้ได้ไหม</summary>
+        <p>ได้เต็มที่ — เปิดลิงก์แล้วจดไดอารี่ บันทึกออเดอร์มือ ดูสรุปผลได้ทันที ส่วน AI อ่านภาพกับ Google Drive เป็นของเสริมเท่านั้น</p>
+      </details>
+      <details>
+        <summary>ข้อมูลหายไหมถ้าไม่ได้ซิงค์ Drive</summary>
+        <p>ข้อมูลอยู่ในเบราว์เซอร์เครื่องนั้น ถ้าล้าง cache/site data หรือลงเครื่องใหม่โดยไม่เคยซิงค์หรือดาวน์โหลดไฟล์สำรองไว้ก่อน จะกู้คืนไม่ได้ แนะนำอย่างน้อยกดดาวน์โหลดไฟล์สำรอง (หน้าตั้งค่า → สำรองข้อมูล) เป็นระยะ</p>
+      </details>
+      <details>
+        <summary>ใช้เครื่องเดียวกันหลายคนได้ไหม</summary>
+        <p>ได้ แต่ถ้าเปิดเบราว์เซอร์เดียวกันข้อมูลจะปนเป็นก้อนเดียว แนะนำให้แยกคนละ browser profile หรือแต่ละคนใช้เครื่องของตัวเอง</p>
+      </details>
+      <details>
+        <summary>ต้องจ่ายเงินตรงไหนบ้าง</summary>
+        <p>ตัวแอพและ Google Drive ฟรี 100% ส่วนอ่านภาพด้วย AI ถ้าเลือก Claude จะจ่ายตามใช้จริง (ถูกมาก) ถ้าเลือก Gemini มี free tier ให้ใช้ฟรี หรือข้ามไปใช้ OCR ในตัวก็ไม่เสียอะไรเลย</p>
+      </details>
+      <details>
+        <summary>ลืม / ทำ API key หายทำไง</summary>
+        <p>ลบของเดิมแล้วสมัครใหม่ที่เว็บผู้ให้บริการได้เลย ไม่กระทบข้อมูลไดอารี่ที่บันทึกไว้ แค่ต้องวาง key ใหม่ในหน้าตั้งค่าอีกครั้ง</p>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    เขียนไว้ให้เพื่อนที่จะมาลองใช้ Trade Memo ด้วยกัน — มีปัญหาตรงไหนถามคนที่ส่งลิงก์นี้ให้ได้เลย
+  </footer>
+
+</div>
+</body>
+</html>
