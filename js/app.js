@@ -5,6 +5,7 @@ import { lineChart, barChart, calendarMonth, donut } from './charts.js';
 import { parseMT5Screenshot, ENGINES } from './ai.js';
 import { ocrImage, parseOcrText } from './ocr.js';
 import { sync as driveSync, signOut as driveSignOut } from './drive.js';
+import { infographicHTML, downloadInfographic } from './infographic.js';
 
 // ---------- tiny helpers ----------
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -180,6 +181,9 @@ async function renderDiary(app) {
       <input type="date" id="datePick" value="${date}">
       <button class="iconbtn" data-nav="1" title="วันถัดไป">›</button>
     </div>
+    <div class="row" style="justify-content:flex-end;margin-top:-6px">
+      <button class="btn ghost small" data-preview>👁️ พรีวิวสรุปวันนี้</button>
+    </div>
     <div class="weekstrip">${strip}</div>
 
     <section class="card">
@@ -275,6 +279,7 @@ async function renderDiary(app) {
   });
   $('[data-add-trade]', app).onclick = () => tradeModal(null);
   $('[data-mt5]', app).onclick = () => mt5Modal();
+  $('[data-preview]', app).onclick = () => infographicModal(state.day);
   $$('[data-trade]', app).forEach(el => el.onclick = () => tradeModal(el.dataset.trade));
 }
 
@@ -360,6 +365,43 @@ function tradeModal(id) {
 function lastSymbol() {
   const ts = state.day && state.day.trades; if (ts && ts.length) return ts[ts.length - 1].symbol;
   return state.settings.lastSymbol || '';
+}
+
+// ---------- day infographic ----------
+async function infographicModal(day) {
+  const planImgs = (await Images.byDate(day.date)).filter(i => i.kind === 'plan').map(urlFor);
+  const theme = currentTheme();
+  const c = openModal(`
+    <div class="modal-head"><h3>👁️ พรีวิวสรุปวันนี้</h3><button class="iconbtn" data-x>✕</button></div>
+    <div id="igWrap" style="display:flex;justify-content:center;overflow:hidden"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" data-x>ปิด</button>
+      <button class="btn" id="igDownload">⬇️ ดาวน์โหลดเป็นรูป</button>
+    </div>`, { wide: true });
+  $$('[data-x]', c).forEach(b => b.onclick = closeModal);
+  const wrap = $('#igWrap', c);
+  wrap.innerHTML = infographicHTML(day, planImgs, theme);
+  const card = $('#igCard', wrap);
+  const fitScale = () => {
+    const avail = wrap.clientWidth;
+    const natural = card.offsetWidth;
+    const scale = Math.min(1, avail / natural);
+    card.style.transform = `scale(${scale})`;
+    card.style.transformOrigin = 'top center';
+    wrap.style.height = (card.offsetHeight * scale) + 'px';
+  };
+  requestAnimationFrame(fitScale);
+  $('#igDownload', c).onclick = async (e) => {
+    const btn = e.currentTarget; const old = btn.textContent;
+    btn.disabled = true; btn.textContent = 'กำลังสร้างรูป…';
+    try {
+      const prevTransform = card.style.transform; card.style.transform = 'none';
+      await downloadInfographic(card, `trade-memo-${day.date}.png`);
+      card.style.transform = prevTransform;
+      toast('ดาวน์โหลดรูปแล้ว', 'ok');
+    } catch (err) { toast('สร้างรูปไม่สำเร็จ: ' + err.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = old; }
+  };
 }
 
 // ---------- MT5 import modal ----------
