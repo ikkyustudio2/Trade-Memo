@@ -370,7 +370,6 @@ function lastSymbol() {
 // ---------- day infographic ----------
 async function infographicModal(day) {
   const planImgs = (await Images.byDate(day.date)).filter(i => i.kind === 'plan').map(urlFor);
-  const theme = currentTheme();
   const c = openModal(`
     <div class="modal-head"><h3>👁️ พรีวิวสรุปวันนี้</h3><button class="iconbtn" data-x>✕</button></div>
     <div id="igWrap" style="display:flex;justify-content:center;overflow:hidden"></div>
@@ -380,7 +379,7 @@ async function infographicModal(day) {
     </div>`, { wide: true });
   $$('[data-x]', c).forEach(b => b.onclick = closeModal);
   const wrap = $('#igWrap', c);
-  wrap.innerHTML = infographicHTML(day, planImgs, theme);
+  wrap.innerHTML = infographicHTML(day, planImgs);
   const card = $('#igCard', wrap);
   const fitScale = () => {
     const avail = wrap.clientWidth;
