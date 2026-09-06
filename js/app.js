@@ -17,7 +17,7 @@ const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = se
 
 // ---------- support links ----------
 const AFFILIATE_URL = 'https://one.exnessonelink.com/a/uar9ilmj';
-const KOFI_URL = ''; // TODO: paste Ko-fi / Buy Me a Coffee link here to enable the tip button
+const KOFI_URL = 'https://ezdn.app/ikkyumedia'; // Easy Donate
 
 const state = {
   view: 'diary',
