@@ -15,6 +15,10 @@ const signed = (n) => (n > 0 ? '+' : '') + money(n);
 const cls = (n) => n > 0 ? 'pos' : n < 0 ? 'neg' : 'dim';
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 
+// ---------- support links ----------
+const AFFILIATE_URL = 'https://one.exnessonelink.com/a/uar9ilmj';
+const KOFI_URL = ''; // TODO: paste Ko-fi / Buy Me a Coffee link here to enable the tip button
+
 const state = {
   view: 'diary',
   date: todayStr(),
@@ -521,8 +525,15 @@ async function renderDashboard(app) {
     period === 'all' ? S.groupBy(trades, t => t.date.slice(0, 4), k => `ปี ${k}`) :
     S.groupBy(trades, t => t.date, k => S.thaiDate(k));
 
+  const showAffiliate = !localStorage.getItem('tm-hide-affiliate');
   app.innerHTML = `
   <div class="stack">
+    ${showAffiliate ? `<div class="card" id="affiliateBanner" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:1.4rem">💹</span>
+      <span style="flex:1;min-width:200px" class="small muted">ยังไม่มีบัญชีเทรด หรืออยากเปลี่ยนโบรกเกอร์? เปิดบัญชีกับ Exness ผ่านลิงก์นี้ไม่มีค่าใช้จ่ายเพิ่ม ช่วยสนับสนุนแอพนี้ด้วย</span>
+      <a class="btn small" href="${AFFILIATE_URL}" target="_blank" rel="noopener sponsored">เปิดบัญชี</a>
+      <button class="iconbtn" id="dismissAffiliate" title="ซ่อน">✕</button>
+    </div>` : ''}
     <div class="periodbar">
       <div class="seg">${['day', 'week', 'month', 'year', 'all'].map(p => `<button class="${p === period ? 'on' : ''}" data-p="${p}">${{ day: 'วัน', week: 'สัปดาห์', month: 'เดือน', year: 'ปี', all: 'ทั้งหมด' }[p]}</button>`).join('')}</div>
       <div class="periodnav ${period === 'all' ? 'hide' : ''}">
@@ -578,6 +589,8 @@ async function renderDashboard(app) {
   };
   mountCharts();
   state.remount = mountCharts;
+  const dismissBtn = $('#dismissAffiliate', app);
+  if (dismissBtn) dismissBtn.onclick = () => { try { localStorage.setItem('tm-hide-affiliate', '1'); } catch {} $('#affiliateBanner', app).remove(); };
   $$('[data-p]', app).forEach(b => b.onclick = () => { state.period = b.dataset.p; renderDashboard(app); });
   $$('[data-shift]', app).forEach(b => b.onclick = () => { state.anchor = S.shiftAnchor(period, anchor, Number(b.dataset.shift)); renderDashboard(app); });
   $('[data-today]', app).onclick = () => { state.anchor = todayStr(); renderDashboard(app); };
@@ -657,6 +670,17 @@ async function renderSettings(app) {
         </div>
         <div class="note">สมัคร key ฟรีได้ที่ <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> (มี free tier ต่อวัน)</div>
         <div class="note">ไม่ใส่ทั้งคู่ก็ได้ — จะใช้ OCR ฟรี (Tesseract) แทน แต่ต้องตรวจตัวเลขเอง · key เก็บอยู่ในเครื่องนี้เท่านั้น ไม่ถูกส่งไป Drive</div>
+      </div>
+    </section>
+
+    <section class="card"><div class="card-head"><h2>🤝 สนับสนุนแอพนี้</h2></div>
+      <div class="stack">
+        <div class="note">แอพนี้ทำและดูแลฟรี ไม่คิดค่าใช้จ่าย ถ้าอยากช่วยสนับสนุนให้พัฒนาต่อ เลือกได้ตามสะดวก ไม่บังคับ</div>
+        <div class="row">
+          <a class="btn" href="${AFFILIATE_URL}" target="_blank" rel="noopener sponsored">💹 เปิดบัญชีเทรดกับ Exness</a>
+          ${KOFI_URL ? `<a class="btn soft" href="${KOFI_URL}" target="_blank" rel="noopener sponsored">☕ เลี้ยงกาแฟผู้พัฒนา</a>` : ''}
+        </div>
+        <div class="dim tiny">เปิดบัญชีผ่านลิงก์นี้ไม่มีค่าใช้จ่ายเพิ่มกับคุณ แค่เป็นลิงก์แนะนำที่ทำให้ผู้พัฒนาได้ค่าคอมมิชชั่นเล็กน้อย</div>
       </div>
     </section>
 
