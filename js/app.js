@@ -662,14 +662,15 @@ async function renderSettings(app) {
     <h1>⚙️ ตั้งค่า</h1>
 
     <section class="card"><div class="card-head"><h2>ทั่วไป</h2></div>
-      <div class="form-grid">
-        <label class="field full"><span>ธีม</span><select id="themeSel">
-          <option value="auto" ${savedTheme() === 'auto' ? 'selected' : ''}>ตามระบบ (อัตโนมัติ)</option>
-          <option value="light" ${savedTheme() === 'light' ? 'selected' : ''}>☀️ กลางวัน</option>
-          <option value="dark" ${savedTheme() === 'dark' ? 'selected' : ''}>🌙 กลางคืน</option>
-        </select></label>
-        <label class="field"><span>สกุลเงินบัญชี</span><input id="currency" type="text" value="${esc(s.currency)}" placeholder="USD"></label>
-        <label class="field"><span>ยอดเริ่มต้นบัญชี (ไว้ดูเฉยๆ)</span><input id="startingBalance" type="number" step="any" value="${esc(s.startingBalance || '')}"></label>
+      <div class="stack">
+        <div>
+          <div class="small muted" style="margin-bottom:10px">ธีม</div>
+          <div class="theme-grid" id="themeGrid"></div>
+        </div>
+        <div class="form-grid">
+          <label class="field"><span>สกุลเงินบัญชี</span><input id="currency" type="text" value="${esc(s.currency)}" placeholder="USD"></label>
+          <label class="field"><span>ยอดเริ่มต้นบัญชี (ไว้ดูเฉยๆ)</span><input id="startingBalance" type="number" step="any" value="${esc(s.startingBalance || '')}"></label>
+        </div>
       </div>
     </section>
 
@@ -755,8 +756,8 @@ async function renderSettings(app) {
     state.settings = await Settings.get();
     const el = $('.save-state'); if (el) { el.textContent = 'บันทึกแล้ว ✓'; setTimeout(() => { if (el.isConnected) el.textContent = ''; }, 1500); }
   }, 400);
-  $$('input, select', app).forEach(i => { if (i.id !== 'themeSel') i.addEventListener('input', save); });
-  $('#themeSel').onchange = e => applyTheme(e.target.value);
+  $$('input, select', app).forEach(i => i.addEventListener('input', save));
+  renderThemePicker();
   $('#syncNow').onclick = () => { save(); setTimeout(doSync, 450); };
   $('#driveOut').onclick = () => { driveSignOut(); toast('ออกจาก Google แล้ว'); };
   $('#exportBtn').onclick = exportBackup;
@@ -839,18 +840,33 @@ async function doSync() {
 $('#syncBtn').onclick = doSync;
 
 // ---------- theme ----------
-function currentTheme() { return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'; }
+const THEME_META = {
+  light: { label: 'กลางวัน', icon: '☀️', color: '#f4f5f9', swatch: '#3b6cf0' },
+  dark: { label: 'กลางคืน', icon: '🌙', color: '#0f1115', swatch: '#151821' },
+  sea: { label: 'ทะเลฝัน', icon: '🌊', color: '#eafbf7', swatch: '#0e9488' },
+  peach: { label: 'พีชหวาน', icon: '🍑', color: '#fff3ee', swatch: '#d6497b' },
+  lavender: { label: 'ลาเวนเดอร์', icon: '🌸', color: '#f6f1ff', swatch: '#7c5cd6' },
+};
+const THEME_CYCLE = ['light', 'dark', 'sea', 'peach', 'lavender'];
+function currentTheme() { const t = document.documentElement.dataset.theme; return THEME_META[t] ? t : 'dark'; }
 function applyTheme(t) {
   if (t === 'auto') { try { localStorage.removeItem('tm-theme'); } catch {} t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; }
   else { try { localStorage.setItem('tm-theme', t); } catch {} }
   document.documentElement.dataset.theme = t;
-  const meta = $('meta[name=theme-color]'); if (meta) meta.content = t === 'light' ? '#f4f5f9' : '#0f1115';
+  const meta = $('meta[name=theme-color]'); if (meta) meta.content = THEME_META[t].color;
   updateThemeBtn();
-  if (state.view === 'settings') { const sel = $('#themeSel'); if (sel) sel.value = savedTheme(); }
+  if (state.view === 'settings') renderThemePicker();
 }
 function savedTheme() { try { return localStorage.getItem('tm-theme') || 'auto'; } catch { return 'auto'; } }
-function updateThemeBtn() { const b = $('#themeBtn'); if (b) b.textContent = currentTheme() === 'light' ? '🌙' : '☀️'; }
-$('#themeBtn').onclick = () => applyTheme(currentTheme() === 'light' ? 'dark' : 'light');
+function updateThemeBtn() { const b = $('#themeBtn'); if (b) b.textContent = THEME_META[currentTheme()].icon; }
+function renderThemePicker() {
+  const grid = $('#themeGrid'); if (!grid) return;
+  const active = savedTheme();
+  grid.innerHTML = `<button class="theme-opt ${active === 'auto' ? 'on' : ''}" data-theme-opt="auto"><span class="sw" style="background:linear-gradient(135deg,#0f1115 50%,#f4f5f9 50%)"></span>ตามระบบ</button>`
+    + THEME_CYCLE.map(k => `<button class="theme-opt ${active === k ? 'on' : ''}" data-theme-opt="${k}"><span class="sw" style="background:${THEME_META[k].swatch}"></span>${THEME_META[k].icon} ${THEME_META[k].label}</button>`).join('');
+  $$('[data-theme-opt]', grid).forEach(b => b.onclick = () => applyTheme(b.dataset.themeOpt));
+}
+$('#themeBtn').onclick = () => { const i = THEME_CYCLE.indexOf(currentTheme()); applyTheme(THEME_CYCLE[(i + 1) % THEME_CYCLE.length]); };
 matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (savedTheme() === 'auto') applyTheme('auto'); });
 updateThemeBtn();
 
