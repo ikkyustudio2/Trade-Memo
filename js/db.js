@@ -97,18 +97,20 @@ export const Images = {
 export const Settings = {
   async get() {
     const s = await reqToPromise('settings', 'readonly', st => st.get('main'));
+    const v = s ? s.value : {};
+    if (v.geminiModel === 'gemini-2.5-flash' || v.geminiModel === 'gemini-2.5-pro') v.geminiModel = 'gemini-3.6-flash';
     return Object.assign({
       claudeKey: '',
       claudeModel: 'claude-opus-5',
       geminiKey: '',
-      geminiModel: 'gemini-2.5-flash',
+      geminiModel: 'gemini-3.6-flash',
       aiEngine: 'claude',
       driveClientId: '',
       driveFolderName: 'Trade Memo',
       currency: 'USD',
       startingBalance: 0,
       lastSync: 0,
-    }, s ? s.value : {});
+    }, v);
   },
   async set(patch) {
     const cur = await Settings.get();

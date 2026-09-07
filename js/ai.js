@@ -10,7 +10,7 @@ const GEMINI_URL = (model, key) => `https://generativelanguage.googleapis.com/v1
 
 export const ENGINES = {
   claude: { label: 'Claude AI (แม่นสุด)', models: ['claude-opus-5', 'claude-sonnet-5', 'claude-haiku-4-5'], keyPlaceholder: 'sk-ant-…', keyHelp: 'console.anthropic.com', paid: true },
-  gemini: { label: 'Gemini (มี free tier)', models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'], keyPlaceholder: 'AIza…', keyHelp: 'aistudio.google.com/apikey', paid: false },
+  gemini: { label: 'Gemini (มี free tier)', models: ['gemini-3.6-flash', 'gemini-3.6-pro', 'gemini-2.0-flash'], keyPlaceholder: 'AIza…', keyHelp: 'aistudio.google.com/apikey', paid: false },
 };
 
 const TRADE_SCHEMA = {
