@@ -1,6 +1,6 @@
 // Service worker: network-first for same-origin, cache fallback so the app opens offline.
-const CACHE = 'trade-memo-v2';
-const SHELL = ['./', './index.html', './css/style.css', './js/app.js', './js/db.js', './js/stats.js', './js/charts.js', './js/ai.js', './js/drive.js', './js/ocr.js', './js/infographic.js', './manifest.json', './icon.svg'];
+const CACHE = 'trade-memo-v3';
+const SHELL = ['./', './index.html', './css/style.css', './js/app.js', './js/db.js', './js/stats.js', './js/charts.js', './js/ai.js', './js/drive.js', './js/ocr.js', './js/infographic.js', './js/news.js', './data/calendar.json', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

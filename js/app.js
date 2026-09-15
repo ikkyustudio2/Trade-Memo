@@ -6,6 +6,7 @@ import { parseMT5Screenshot, ENGINES } from './ai.js';
 import { ocrImage, parseOcrText } from './ocr.js';
 import { sync as driveSync, signOut as driveSignOut } from './drive.js';
 import { infographicHTML, downloadInfographic } from './infographic.js';
+import { loadCalendar, eventsForDate, localTime, calendarRange } from './news.js';
 
 // ---------- tiny helpers ----------
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -153,6 +154,9 @@ async function renderDiary(app) {
   state.day = await Days.getOrCreate(date);
   const day = state.day;
   const isToday = date === todayStr();
+  const calendar = await loadCalendar();
+  const newsToday = eventsForDate(calendar, date);
+  const newsRange = calendarRange(calendar);
   const m = S.computeMetrics(day.trades);
 
   // week strip
@@ -185,6 +189,22 @@ async function renderDiary(app) {
       <button class="btn ghost small" data-preview>👁️ พรีวิวสรุปวันนี้</button>
     </div>
     <div class="weekstrip">${strip}</div>
+
+    <section class="card">
+      <div class="card-head"><h2>📰 ข่าวที่มีผลต่อทองคำ${isToday ? 'วันนี้' : ''}</h2>${newsRange ? `<span class="dim tiny">อัปเดต ${new Date(calendar.fetchedAt).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}</span>` : ''}</div>
+      ${newsToday.length ? `<div class="stack" style="gap:8px">${newsToday.map(e => `
+        <div class="row between" style="align-items:flex-start;gap:10px">
+          <div class="row" style="gap:8px;flex:1;min-width:0">
+            <span class="pill ${e.impact === 'High' ? 'neg' : ''}" style="flex:none">${esc(localTime(e.date))}</span>
+            <span class="chip ${e.impact === 'High' ? 'on neg' : 'on'}" style="cursor:default;flex:none">${e.impact === 'High' ? '🔴 สูง' : '🟡 กลาง'}</span>
+            <span class="small">${esc(e.title)}</span>
+          </div>
+          ${(e.forecast || e.previous) ? `<span class="dim tiny" style="flex:none;white-space:nowrap">คาด ${esc(e.forecast || '-')} · ครั้งก่อน ${esc(e.previous || '-')}</span>` : ''}
+        </div>`).join('')}</div>`
+        : newsRange && date >= newsRange.start && date <= newsRange.end
+          ? `<div class="empty">ไม่มีข่าวสำคัญที่กระทบทองคำในวันนี้</div>`
+          : `<div class="empty">${newsRange ? `มีข้อมูลข่าวเฉพาะ ${newsRange.start} ถึง ${newsRange.end} (อัปเดตทุก 6 ชม.)` : 'ยังไม่มีข้อมูลข่าว'}</div>`}
+    </section>
 
     <section class="card">
       <div class="card-head"><h2>📋 แผนก่อนเทรด</h2><span class="save-state"></span></div>
